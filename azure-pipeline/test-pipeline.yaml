@@ -75,6 +75,13 @@ stages:
           installationPath: $(Agent.ToolsDirectory)/dotnet
         continueOnError: false
 
+      - script: |
+          # Ensure Java 17 is used
+          export JAVA_HOME=/usr/local/Cellar/openjdk@17/17.0.12/libexec/openjdk.jdk/Contents/Home
+          export PATH=$JAVA_HOME/bin:$PATH
+          echo "JAVA_HOME is set to $JAVA_HOME"
+        displayName: 'Set JAVA_HOME to Java 17'
+
       - task: SonarQubePrepare@5
         inputs:
           SonarQube: 'SonarQubeProject'
@@ -82,6 +89,9 @@ stages:
           projectKey: 'Tech_Tech_8f73cceb-f7a0-48c1-8c48-4ad0d72edd6e'
           projectName: 'Tech'
           projectVersion: '1.0'
+          extraProperties: |
+            # Ensure the correct Java version is used for analysis
+            sonar.java.jdkHome=$(JAVA_HOME)
         displayName: 'Prepare SonarQube Analysis'
         continueOnError: false
 
