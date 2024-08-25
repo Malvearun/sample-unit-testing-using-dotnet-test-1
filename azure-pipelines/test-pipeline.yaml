@@ -79,7 +79,7 @@ stages:
 
       - task: SonarQubePrepare@5
         inputs:
-          SonarQube: 'SonarQubeConnection'
+          SonarQube: 'SonarQubeProject'
           scannerMode: 'MSBuild'
           projectKey: 'Tech_Tech_8f73cceb-f7a0-48c1-8c48-4ad0d72edd6e'
           projectName: 'Tech'
