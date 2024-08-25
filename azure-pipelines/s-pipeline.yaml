@@ -16,7 +16,7 @@ trigger:
       - sample-unit-testing-using-dotnet-test-1/azure-pipelines/variables.yaml
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'Azure Pipelines'
 
 pr:
   branches:
@@ -30,7 +30,7 @@ stages:
 #   jobs:
 #     - job: GetInfraArtifacts
 #       pool: 
-#         vmImage: 'ubuntu-latest'
+#         vmImage: 'Azure Pipelines'
 #       steps:
 #         - checkout: self
 
@@ -56,7 +56,7 @@ stages:
     - job: Build
       displayName: 'Build Job'
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: 'Azure Pipelines'
       steps:
       - task: UseDotNet@2
         inputs:
@@ -83,7 +83,7 @@ stages:
     - job: SonarQubeAnalysis
       displayName: 'SonarQube Analysis Job'
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: 'Azure Pipelines'
       steps:
       - task: UseDotNet@2
         inputs:
@@ -119,7 +119,7 @@ stages:
     - job: Test
       displayName: 'Test Job'
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: 'Azure Pipelines'
       steps:
       - task: UseDotNet@2
         inputs:
@@ -139,7 +139,7 @@ stages:
     - job: PublishTestResults
       displayName: 'Publish Test Results Job'
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: 'Azure Pipelines'
       steps:
       - task: PublishTestResults@2
         inputs:
@@ -155,7 +155,7 @@ stages:
 #     - job: BuildAndPushDocker
 #       displayName: 'Build and Push Docker Image Job'
 #       pool:
-#         vmImage: 'ubuntu-latest'
+#         vmImage: 'Azure Pipelines'
 #       steps:
 #       - task: Docker@2
 #         inputs:
@@ -179,7 +179,7 @@ stages:
     - job: Deploy
       displayName: 'Deployment Job'
       pool:
-        vmImage: 'ubuntu-latest'
+        vmImage: 'Azure Pipelines'
       steps:
       - script: echo 'TODO – Deployment'
         displayName: 'TODO – Deployment'
@@ -192,7 +192,7 @@ stages:
 #     - job: PublishPipelineLogs
 #       displayName: 'Publish Pipeline Logs Job'
 #       pool:
-#         vmImage: 'ubuntu-latest'
+#         vmImage: 'Azure Pipelines'
 #       steps:
 #       - script: |
 #           mkdir -p $(Pipeline.Workspace)/logs
@@ -231,7 +231,7 @@ stages:
 #   jobs: 
 #     - job: CleanUp
 #       pool: 
-#         name: 'ubuntu-latest'
+#         name: 'Azure Pipelines'
 #       continueOnError: true
 #       steps:
 #         - download: none
