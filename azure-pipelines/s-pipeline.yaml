@@ -1,11 +1,11 @@
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 
-resources:
-  repositories:
-    - repository: sample-unit-testing-using-dotnet-test-1
-      type: git
-      name: tech/sample-unit-testing-using-dotnet-test-1
-      reference: azure-pipelines
+# resources:
+#   repositories:
+#     - repository: sample-unit-testing-using-dotnet-test-1
+#       type: git
+#       name: tech/sample-unit-testing-using-dotnet-test-1
+#       reference: azure-pipelines
 
 trigger:
   branches:
@@ -36,11 +36,11 @@ stages:
 
 # Stage 2: Approve Release and Build
 - stage: ApproveRelease_Build
-  dependsOn: GetInfraArtifacts
+  # dependsOn: GetInfraArtifacts
   condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
   jobs:
     - deployment: ReviewRelease_App
-      pool: server
+      pool: Azure Pipelines
       environment: Approval-Updates
       strategy:
         runOnce:
@@ -96,7 +96,7 @@ stages:
           SonarQube: 'SonarQube Connection' # This should match the name of your service connection
           scannerMode: 'MSBuild'
           projectKey: '$(SONAR_PROJECT_KEY)'
-          projectName: 'Your Project Name'
+          projectName: '$(SONAR_PROJECT_NAME)'
           projectVersion: '1.0'
           extraProperties: |
             sonar.branch.name=$(Build.SourceBranchName)
@@ -113,7 +113,7 @@ stages:
           pollingTimeoutSec: '300'
         displayName: 'Publish SonarQube Quality Gate Result'
 
-# Stage 5: Test
+#Stage 5: Test
 - stage: Test
   displayName: 'Test Stage'
   dependsOn: SonarQubeAnalysis
@@ -134,20 +134,20 @@ stages:
         continueOnError: false
 
 # Stage 6: Publish Test Results
-- stage: PublishTestResults
-  displayName: 'Publish Test Results'
-  dependsOn: Test
-  jobs:
-    - job: PublishTestResults
-      displayName: 'Publish Test Results Job'
-      pool:
-        vmImage: 'Azure Pipelines'
-      steps:
-      - task: PublishTestResults@2
-        inputs:
-          testResultsFiles: '**/*.trx'
-          testRunTitle: 'PrimeService Unit Tests'
-          searchFolder: $(Pipeline.Workspace)/test-results
+# - stage: PublishTestResults
+#   displayName: 'Publish Test Results'
+#   dependsOn: Test
+#   jobs:
+#     - job: PublishTestResults
+#       displayName: 'Publish Test Results Job'
+#       pool:
+#         vmImage: 'Azure Pipelines'
+#       steps:
+#       - task: PublishTestResults@2
+#         inputs:
+#           testResultsFiles: '**/*.trx'
+#           testRunTitle: 'PrimeService Unit Tests'
+#           searchFolder: $(Pipeline.Workspace)/test-results
 
 # Stage 7: Build and Push Docker Image
 # - stage: BuildAndPush
@@ -176,7 +176,7 @@ stages:
 # Stage 8: Deploy
 - stage: Deploy
   displayName: 'Deploy Stage'
-  dependsOn: BuildAndPush
+  dependsOn: Test
   jobs:
     - job: Deploy
       displayName: 'Deployment Job'
