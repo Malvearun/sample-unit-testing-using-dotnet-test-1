@@ -74,8 +74,6 @@ stages:
           version: '8.x'
           installationPath: $(Agent.ToolsDirectory)/dotnet
         continueOnError: false
-        
-    
 
       - task: SonarQubePrepare@5
         inputs:
@@ -84,6 +82,9 @@ stages:
           projectKey: 'Tech_Tech_8f73cceb-f7a0-48c1-8c48-4ad0d72edd6e'
           projectName: 'Tech'
           projectVersion: '1.0'
+          # Comment or remove the following line if using Community Edition
+          # extraProperties: |
+          #   sonar.branch.name=$(Build.SourceBranchName)
         displayName: 'Prepare SonarQube Analysis'
         continueOnError: false
 
