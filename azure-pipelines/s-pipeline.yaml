@@ -95,9 +95,11 @@ stages:
         inputs:
           SonarQube: 'SonarQube Connection' # This should match the name of your service connection
           scannerMode: 'MSBuild'
-          projectKey: 'your-project-key'
+          projectKey: '$(SONAR_PROJECT_KEY)'
           projectName: 'Your Project Name'
           projectVersion: '1.0'
+          extraProperties: |
+            sonar.branch.name=$(Build.SourceBranchName)
         displayName: 'Prepare SonarQube Analysis'
 
       - script: dotnet build PrimeService/PrimeService.csproj --configuration Release
