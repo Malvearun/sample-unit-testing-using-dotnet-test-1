@@ -59,52 +59,49 @@ stages:
         displayName: 'Build Project'
         continueOnError: false
 
-# - stage: SonarQubeAnalysis
-#   dependsOn: Build
-#   displayName: 'SonarQube Analysis Stage'
-#   jobs:
-#     - job: SonarQubeAnalysis
-#       displayName: 'SonarQube Analysis Job'
-#       pool:
-#         name: Default
-#       steps:
-#       - task: UseDotNet@2
-#         inputs:
-#           packageType: 'sdk'
-#           version: '8.x'
-#           installationPath: $(Agent.ToolsDirectory)/dotnet
-#         continueOnError: false
+- stage: SonarQubeAnalysis
+  dependsOn: Build
+  displayName: 'SonarQube Analysis Stage'
+  jobs:
+    - job: SonarQubeAnalysis
+      displayName: 'SonarQube Analysis Job'
+      pool:
+        name: Default
+      steps:
+      - task: UseDotNet@2
+        inputs:
+          packageType: 'sdk'
+          version: '8.x'
+          installationPath: $(Agent.ToolsDirectory)/dotnet
+        continueOnError: false
 
-#       - task: SonarQubePrepare@5
-#         inputs:
-#           SonarQube: 'SonarQubeProject'
-#           scannerMode: 'MSBuild'
-#           projectKey: 'Tech_Tech_8f73cceb-f7a0-48c1-8c48-4ad0d72edd6e'
-#           projectName: 'Tech'
-#           projectVersion: '1.0'
-#           # Comment or remove the following line if using Community Edition
-#           # extraProperties: |
-#           #   sonar.branch.name=$(Build.SourceBranchName)
-#         displayName: 'Prepare SonarQube Analysis'
-#         continueOnError: false
+      - task: SonarQubePrepare@5
+        inputs:
+          SonarQube: 'SonarQubeProject'
+          scannerMode: 'MSBuild'
+          projectKey: 'Tech_Tech_8f73cceb-f7a0-48c1-8c48-4ad0d72edd6e'
+          projectName: 'Tech'
+          projectVersion: '1.0'
+        displayName: 'Prepare SonarQube Analysis'
+        continueOnError: false
 
-#       - script: dotnet build PrimeService/PrimeService.csproj --configuration Release
-#         displayName: 'Build Project for SonarQube Analysis'
-#         continueOnError: false
+      - script: dotnet build PrimeService/PrimeService.csproj --configuration Release
+        displayName: 'Build Project for SonarQube Analysis'
+        continueOnError: false
 
-#       - task: SonarQubeAnalyze@5
-#         displayName: 'Run SonarQube Analysis'
-#         continueOnError: false
+      - task: SonarQubeAnalyze@5
+        displayName: 'Run SonarQube Analysis'
+        continueOnError: false
 
-#       - task: SonarQubePublish@5
-#         inputs:
-#           pollingTimeoutSec: '300'
-#         displayName: 'Publish SonarQube Quality Gate Result'
-#         continueOnError: false
+      - task: SonarQubePublish@5
+        inputs:
+          pollingTimeoutSec: '300'
+        displayName: 'Publish SonarQube Quality Gate Result'
+        continueOnError: false
 
 - stage: Test
   displayName: 'Test Stage'
-  dependsOn: SonarQubeAnalysis
+  dependsOn: Build
   jobs:
     - job: Test
       displayName: 'Test Job'
