@@ -16,7 +16,7 @@ trigger:
       - sample-unit-testing-using-dotnet-test-1/azure-pipelines/variables.yaml
 
 pool:
-  vmImage: 'Azure Pipelines'
+  vmImage: 'BuildAgent'
 
 pr:
   branches:
@@ -30,7 +30,7 @@ stages:
 #   jobs:
 #     - job: GetInfraArtifacts
 #       pool: 
-#         vmImage: 'Azure Pipelines'
+#         vmImage: 'BuildAgent'
 #       steps:
 #         - checkout: self
 
@@ -40,7 +40,7 @@ stages:
   condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
   jobs:
     - deployment: ReviewRelease_App
-      pool: Azure Pipelines
+      pool: BuildAgent
       environment: Approval-Updates
       strategy:
         runOnce:
@@ -56,7 +56,7 @@ stages:
     - job: Build
       displayName: 'Build Job'
       pool:
-        vmImage: 'Azure Pipelines'
+        vmImage: 'BuildAgent'
       steps:
       - task: UseDotNet@2
         inputs:
@@ -83,7 +83,7 @@ stages:
     - job: SonarQubeAnalysis
       displayName: 'SonarQube Analysis Job'
       pool:
-        vmImage: 'Azure Pipelines'
+        vmImage: 'BuildAgent'
       steps:
       - task: UseDotNet@2
         inputs:
@@ -121,7 +121,7 @@ stages:
     - job: Test
       displayName: 'Test Job'
       pool:
-        vmImage: 'Azure Pipelines'
+        vmImage: 'BuildAgent'
       steps:
       - task: UseDotNet@2
         inputs:
@@ -141,7 +141,7 @@ stages:
 #     - job: PublishTestResults
 #       displayName: 'Publish Test Results Job'
 #       pool:
-#         vmImage: 'Azure Pipelines'
+#         vmImage: 'BuildAgent'
 #       steps:
 #       - task: PublishTestResults@2
 #         inputs:
@@ -157,7 +157,7 @@ stages:
 #     - job: BuildAndPushDocker
 #       displayName: 'Build and Push Docker Image Job'
 #       pool:
-#         vmImage: 'Azure Pipelines'
+#         vmImage: 'BuildAgent'
 #       steps:
 #       - task: Docker@2
 #         inputs:
@@ -181,7 +181,7 @@ stages:
     - job: Deploy
       displayName: 'Deployment Job'
       pool:
-        vmImage: 'Azure Pipelines'
+        vmImage: 'BuildAgent'
       steps:
       - script: echo 'TODO – Deployment'
         displayName: 'TODO – Deployment'
@@ -194,7 +194,7 @@ stages:
 #     - job: PublishPipelineLogs
 #       displayName: 'Publish Pipeline Logs Job'
 #       pool:
-#         vmImage: 'Azure Pipelines'
+#         vmImage: 'BuildAgent'
 #       steps:
 #       - script: |
 #           mkdir -p $(Pipeline.Workspace)/logs
@@ -220,7 +220,7 @@ stages:
 #   condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
 #   jobs:
 #     - deployment: ReviewRelease_CleanUp
-#       pool: server
+#       pool: BuildAgent
 #       environment: Approval-Updates
 #       strategy:
 #         runOnce:
@@ -233,7 +233,7 @@ stages:
 #   jobs: 
 #     - job: CleanUp
 #       pool: 
-#         name: 'Azure Pipelines'
+#         name: 'BuildAgent'
 #       continueOnError: true
 #       steps:
 #         - download: none
