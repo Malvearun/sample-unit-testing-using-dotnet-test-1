@@ -1,20 +1,11 @@
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 
 trigger:
-  branches:
-    include:
-      - azure-pipelines
-  paths:
-    include:
-      - sample-unit-testing-using-dotnet-test-1/azure-pipelines/variables.yaml
+  - main
 
 pool:
-  vmImage: 'Default'
+  vmImage: 'Default'  
 
-pr:
-  branches:
-    include:
-      - azure-pipelines
 
 stages:
 
@@ -89,9 +80,6 @@ stages:
           projectKey: 'Tech_Tech_8f73cceb-f7a0-48c1-8c48-4ad0d72edd6e'
           projectName: 'Tech'
           projectVersion: '1.0'
-          extraProperties: |
-            # Ensure the correct Java version is used for analysis
-            sonar.java.jdkHome=$(JAVA_HOME)
         displayName: 'Prepare SonarQube Analysis'
         continueOnError: false
 
