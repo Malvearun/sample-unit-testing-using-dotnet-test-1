@@ -3,6 +3,7 @@ name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 trigger:
   branches:
     include:
+      - main
       - azure-pipelines
 
 pool:
