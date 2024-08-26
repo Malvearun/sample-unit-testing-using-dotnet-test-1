@@ -122,23 +122,24 @@ stages:
     - job: PublishPipelineLogs
       displayName: 'Publish Pipeline Logs Job'
       pool:
-        vmImage: Default
+        name: Default # Self-hosted agent pool
+      timeoutInMinutes: 10 # Set job timeout to 10 minutes
       steps:
       - script: |
-          mkdir -p $(Pipeline.Workspace)/logs
-          cp -r $(Agent.TempDirectory)/* $(Pipeline.Workspace)/logs/
-        displayName: 'Copy Logs'
+          mkdir -p $(Agent.TempDirectory)/logs
+          cp -r $(Agent.TempDirectory)/* $(Agent.TempDirectory)/logs/
+        displayName: 'Copy Logs to Temp Directory'
 
       - task: ArchiveFiles@2
         inputs:
-          rootFolderOrFile: $(Pipeline.Workspace)/logs
+          rootFolderOrFile: $(Agent.TempDirectory)/logs
           includeRootFolder: false
-          archiveFile: $(Pipeline.Workspace)/pipeline_logs.zip
+          archiveFile: $(Agent.TempDirectory)/pipeline_logs.zip
           replaceExistingArchive: true
         displayName: 'Archive Pipeline Logs'
 
       - task: PublishPipelineArtifact@1
         inputs:
-          targetPath: $(Pipeline.Workspace)/pipeline_logs.zip
+          targetPath: $(Agent.TempDirectory)/pipeline_logs.zip
           artifact: pipeline-logs
         displayName: 'Publish Pipeline Logs as Artifact'
