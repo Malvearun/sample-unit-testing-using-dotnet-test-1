@@ -16,12 +16,6 @@ stages:
     - deployment: ReviewRelease_App
       pool: Default
       environment: Approval-Updates
-      continueOnError: false
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - script: echo "Deploying Application after approval"
 
 - stage: Build
   dependsOn: ApproveRelease_Build
