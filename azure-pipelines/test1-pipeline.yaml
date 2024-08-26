@@ -1,7 +1,9 @@
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 
 trigger:
-  - main
+  branches:
+    include:
+      - azure-pipelines
 
 pool:
   vmImage: 'Default'  
