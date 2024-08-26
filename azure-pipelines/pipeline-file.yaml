@@ -11,11 +11,18 @@ pool:
 stages:
 
 - stage: ApproveRelease_Build
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
   jobs:
     - deployment: ReviewRelease_App
       pool: Default
-      environment: Approval-Updates
+      displayName: 'Request Approval'
+      environment: RequestApproval
+      continueOnError: false
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - script: echo "Deploying Application after approval"
+              displayName: 'Wait for Approval'
 
 - stage: Build
   dependsOn: ApproveRelease_Build
