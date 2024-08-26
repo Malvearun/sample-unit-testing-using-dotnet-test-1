@@ -116,31 +116,41 @@ stages:
         continueOnError: false
 
 - stage: PublishArtifacts
-  displayName: 'Publish Complete Pipeline Logs'
+  displayName: 'Publish All Pipeline Logs'
   dependsOn: Deploy
   jobs:
-    - job: PublishCompletePipelineLogs
-      displayName: 'Publish Complete Pipeline Logs Job'
+    - job: PublishPipelineLogs
+      displayName: 'Publish Pipeline Logs Job'
       pool:
         name: Default # Self-hosted agent pool
       timeoutInMinutes: 10 # Set job timeout to 10 minutes
       steps:
       - script: |
-          echo "Copying pipeline logs to a temporary directory..."
-          mkdir -p $(Pipeline.Workspace)/complete-logs
-          cp -r $(System.DefaultWorkingDirectory)/* $(Pipeline.Workspace)/complete-logs/
-        displayName: 'Copy Pipeline Logs to Temp Directory'
+          # Create a directory for logs
+          mkdir -p $(Agent.TempDirectory)/pipeline_logs
+
+          # Copy all logs from the agent temp directory
+          echo "Copying pipeline logs..."
+          cp -r $(Agent.TempDirectory)/* $(Agent.TempDirectory)/pipeline_logs/
+
+          # Additionally, copy logs from the pipeline workspace if needed
+          if [ -d "$(Pipeline.Workspace)" ]; then
+              echo "Copying workspace logs..."
+              cp -r $(Pipeline.Workspace)/* $(Agent.TempDirectory)/pipeline_logs/
+          fi
+        displayName: 'Copy All Logs to Temp Directory'
 
       - task: ArchiveFiles@2
         inputs:
-          rootFolderOrFile: $(Pipeline.Workspace)/complete-logs
+          rootFolderOrFile: $(Agent.TempDirectory)/pipeline_logs
           includeRootFolder: false
-          archiveFile: $(Pipeline.Workspace)/complete_pipeline_logs.zip
+          archiveFile: $(Agent.TempDirectory)/all_pipeline_logs.zip
           replaceExistingArchive: true
-        displayName: 'Archive Complete Pipeline Logs'
+        displayName: 'Archive All Pipeline Logs'
 
       - task: PublishPipelineArtifact@1
         inputs:
-          targetPath: $(Pipeline.Workspace)/complete_pipeline_logs.zip
-          artifact: complete-pipeline-logs
-        displayName: 'Publish Complete Pipeline Logs as Artifact'
+          targetPath: $(Agent.TempDirectory)/all_pipeline_logs.zip
+          artifact: all-pipeline-logs
+        displayName: 'Publish All Pipeline Logs as Artifact'
+
