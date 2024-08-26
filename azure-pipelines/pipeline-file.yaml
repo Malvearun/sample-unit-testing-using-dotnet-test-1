@@ -116,30 +116,31 @@ stages:
         continueOnError: false
 
 - stage: PublishArtifacts
-  displayName: 'Publish Pipeline Logs'
+  displayName: 'Publish Complete Pipeline Logs'
   dependsOn: Deploy
   jobs:
-    - job: PublishPipelineLogs
-      displayName: 'Publish Pipeline Logs Job'
+    - job: PublishCompletePipelineLogs
+      displayName: 'Publish Complete Pipeline Logs Job'
       pool:
         name: Default # Self-hosted agent pool
       timeoutInMinutes: 10 # Set job timeout to 10 minutes
       steps:
       - script: |
-          mkdir -p $(Agent.TempDirectory)/logs
-          cp -r $(Agent.TempDirectory)/* $(Agent.TempDirectory)/logs/
-        displayName: 'Copy Logs to Temp Directory'
+          echo "Copying pipeline logs to a temporary directory..."
+          mkdir -p $(Pipeline.Workspace)/complete-logs
+          cp -r $(System.DefaultWorkingDirectory)/* $(Pipeline.Workspace)/complete-logs/
+        displayName: 'Copy Pipeline Logs to Temp Directory'
 
       - task: ArchiveFiles@2
         inputs:
-          rootFolderOrFile: $(Agent.TempDirectory)/logs
+          rootFolderOrFile: $(Pipeline.Workspace)/complete-logs
           includeRootFolder: false
-          archiveFile: $(Agent.TempDirectory)/pipeline_logs.zip
+          archiveFile: $(Pipeline.Workspace)/complete_pipeline_logs.zip
           replaceExistingArchive: true
-        displayName: 'Archive Pipeline Logs'
+        displayName: 'Archive Complete Pipeline Logs'
 
       - task: PublishPipelineArtifact@1
         inputs:
-          targetPath: $(Agent.TempDirectory)/pipeline_logs.zip
-          artifact: pipeline-logs
-        displayName: 'Publish Pipeline Logs as Artifact'
+          targetPath: $(Pipeline.Workspace)/complete_pipeline_logs.zip
+          artifact: complete-pipeline-logs
+        displayName: 'Publish Complete Pipeline Logs as Artifact'
