@@ -83,7 +83,7 @@ stages:
 
 - stage: Test
   displayName: 'Test Stage'
-  dependsOn: Build
+  dependsOn: SonarQubeAnalysis
   jobs:
     - job: Test
       displayName: 'Test Job'
@@ -114,3 +114,31 @@ stages:
       - script: echo 'TODO – Deployment'
         displayName: 'TODO – Deployment'
         continueOnError: false
+
+- stage: PublishArtifacts
+  displayName: 'Publish Pipeline Logs'
+  dependsOn: Deploy
+  jobs:
+    - job: PublishPipelineLogs
+      displayName: 'Publish Pipeline Logs Job'
+      pool:
+        vmImage: Default
+      steps:
+      - script: |
+          mkdir -p $(Pipeline.Workspace)/logs
+          cp -r $(Agent.TempDirectory)/* $(Pipeline.Workspace)/logs/
+        displayName: 'Copy Logs'
+
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: $(Pipeline.Workspace)/logs
+          includeRootFolder: false
+          archiveFile: $(Pipeline.Workspace)/pipeline_logs.zip
+          replaceExistingArchive: true
+        displayName: 'Archive Pipeline Logs'
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: $(Pipeline.Workspace)/pipeline_logs.zip
+          artifact: pipeline-logs
+        displayName: 'Publish Pipeline Logs as Artifact'
