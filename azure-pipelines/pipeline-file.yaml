@@ -1,20 +1,10 @@
 name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
 
 trigger:
-  branches:
-    include:
-      - azure-pipelines
-  paths:
-    include:
-      - sample-unit-testing-using-dotnet-test-1/azure-pipelines/variables.yaml
+  - main
 
 pool:
-  vmImage: 'Default'
-
-pr:
-  branches:
-    include:
-      - azure-pipelines
+  vmImage: 'Default'  
 
 stages:
 
@@ -68,36 +58,26 @@ stages:
       pool:
         name: Default
       steps:
-      - task: UseDotNet@2
+      - task: CmdLine@2
+        displayName: 'Install Sonar Tools and Start Scanner'
         inputs:
-          packageType: 'sdk'
-          version: '8.x'
-          installationPath: $(Agent.ToolsDirectory)/dotnet
-        continueOnError: false
+          script: |
+            echo Installing sonarScanner tool
+            dotnet tool install --global dotnet-sonarscanner 
 
-      - task: SonarQubePrepare@5
-        inputs:
-          SonarQube: 'SonarQubeProject'
-          scannerMode: 'MSBuild'
-          projectKey: 'Tech_Tech_8f73cceb-f7a0-48c1-8c48-4ad0d72edd6e'
-          projectName: 'Tech'
-          projectVersion: '1.0'
-        displayName: 'Prepare SonarQube Analysis'
-        continueOnError: false
+            echo Start Scanner
+            dotnet-sonarscanner begin /k:"$(SONAR_PROJECT_KEY)" /d:sonar.host.url="$(SONAR_LINK)" /d:sonar.login="$(SONAR_TOKEN)"
 
       - script: dotnet build PrimeService/PrimeService.csproj --configuration Release
         displayName: 'Build Project for SonarQube Analysis'
         continueOnError: false
 
-      - task: SonarQubeAnalyze@5
-        displayName: 'Run SonarQube Analysis'
-        continueOnError: false
-
-      - task: SonarQubePublish@5
+      - task: CmdLine@2
+        displayName: 'Collect Sonar results and Upload'
         inputs:
-          pollingTimeoutSec: '300'
-        displayName: 'Publish SonarQube Quality Gate Result'
-        continueOnError: false
+          script: |
+            echo Run Sonar End
+            dotnet-sonarscanner end /d:sonar.login="$(SONAR_TOKEN)"
 
 - stage: Test
   displayName: 'Test Stage'
