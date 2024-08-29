@@ -1,4 +1,4 @@
-@PrimeApi_HostAddress = http://localhost:5076
+@PrimeApi_HostAddress = http://localhost:5086
 
 GET {{PrimeApi_HostAddress}}/weatherforecast/
 Accept: application/json

@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- Add the project reference here -->
     <ProjectReference Include="..\PrimeService\PrimeService.csproj" />
   </ItemGroup>
 

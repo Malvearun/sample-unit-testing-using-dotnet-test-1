@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: primeapi
+    ports:
+      - "6000:6000"
+      - "6001:6001"
+    environment:
+      - DOTNET_ENVIRONMENT=${DOTNET_ENVIRONMENT}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - CONNECTION_STRING=${CONNECTION_STRING}
+      - ASPNETCORE_URLS=http://0.0.0.0:6000
+    depends_on:
+      - db
+
+  db:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_DB: dot_net
+      POSTGRES_USER: tech_exercise
+      POSTGRES_PASSWORD: TechExercise@123
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
